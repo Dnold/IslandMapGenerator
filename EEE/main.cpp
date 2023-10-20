@@ -160,8 +160,10 @@ void DrawChunk(Chunk* chunk, Vector2Int offset, int chunkSize, int tileSize) {
 	for (int x = 0; x < chunkSize; x++) {
 		for (int y = 0; y < chunkSize; y++) {
 			DrawRandomTile({ offset.x + (float)x * tileSize,offset.y + (float)y * tileSize }, tileSize, chunk->map[x][y]);
+			
 		}
 	}
+	//DrawBorder(chunk->map, Vector2Int(chunkSize,chunkSize), offset.x, offset.y, tileSize);
 }
 void DrawChunkGrid(Chunk*** chunks, float offsetX, float offsetY,int chunkSize,int gridSize,int tileSize) {
 	for (int chunkX = 0; chunkX < gridSize; chunkX++) {
@@ -169,6 +171,7 @@ void DrawChunkGrid(Chunk*** chunks, float offsetX, float offsetY,int chunkSize,i
 			Vector2Int offset = { (int)offsetX + (chunkX * chunkSize * tileSize),
 					  (int)offsetY + (chunkY * chunkSize * tileSize) };
 			DrawChunk(chunks[chunkX][chunkY],offset,chunkSize,tileSize);
+			
 		}
 	}
 }
@@ -176,17 +179,23 @@ void DrawChunkGrid(Chunk*** chunks, float offsetX, float offsetY,int chunkSize,i
 int main(void) {
 
 	srand(static_cast<unsigned int>(time(nullptr)));
-	const int CHUNK_SIZE = 100;
-	const int GRID_SIZE = 25;
-	const int TILE_SIZE = 1;
-
-	Chunk*** chunks = GenerateChunks(GRID_SIZE,CHUNK_SIZE);
+	const int CHUNK_SIZE = 32;
+	const int GRID_SIZE = 8;
+	const int TILE_SIZE = 2;
+	Chunk*** chunks = GenerateChunks(GRID_SIZE, CHUNK_SIZE);
+	
 
 	InitWindow(1000, 1000, "Hello World");
 	while (!WindowShouldClose()) {
 		BeginDrawing();
 		ClearBackground(BLACK);
-
+		if (IsKeyPressed(KEY_R)) {
+			chunks = GenerateChunks(GRID_SIZE, CHUNK_SIZE);
+		}
+		if (IsKeyDown(KEY_T)) {
+			chunks = GenerateChunks(GRID_SIZE, CHUNK_SIZE);
+		}
+		
 		Vector2Int totalGridSize = GetTotalGridSize(CHUNK_SIZE,GRID_SIZE,TILE_SIZE);
 
 		float xOffset = (GetScreenWidth() - totalGridSize.x) / 2.0f;
