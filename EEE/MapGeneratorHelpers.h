@@ -1,5 +1,8 @@
 #pragma once
 #include "TileDefinitions.cpp"
+#include <cstdlib>
+
+
 class MapGeneratorHelpers
 {
 public:bool IsBorder(int x, int y, Vector2Int size) {
@@ -78,17 +81,29 @@ protected:Chunk*** DivideIntoChunks(Dynamic2DMapArray fullmap, int gridSize, int
 	for (int cx = 0; cx < gridSize; cx++) {
 		for (int cy = 0; cy < gridSize; cy++) {
 			Vector2Int chunkCenter = Vector2Int(cx * chunkSize + chunkSize / 2, cy * chunkSize + chunkSize / 2);
-			Dynamic2DMapArray chunkMap = Dynamic2DMapArray(Vector2Int(chunkSize,chunkSize));
+			Dynamic2DMapArray chunkMap = Dynamic2DMapArray(Vector2Int(chunkSize, chunkSize));
 			for (int x = 0; x < chunkSize; x++) {
 				for (int y = 0; y < chunkSize; y++) {
 
 					chunkMap.SetValue(x, y, fullmap.GetValue(cx * chunkSize + x, cy * chunkSize + y));
 				}
 			}
-			chunks[cx][cy] = new Chunk(Vector2Int(chunkSize,chunkSize), 1, chunkMap);
+			chunks[cx][cy] = new Chunk(Vector2Int(chunkSize, chunkSize), 1, chunkMap);
 		}
 	}
 	return chunks;
+}
+protected: int GetDistanceToNearestIsland(Vector2Int pos, std::vector<Vector2Int> islandTilePos) {
+	int minDistance = INT32_MAX;
+	for (int i = 0; i < islandTilePos.size(); i++) {
+		Vector2Int tile = islandTilePos[i];
+		int distance = abs(tile.x - pos.x) + abs(tile.y - pos.y);
+		if (distance < minDistance) {
+			minDistance = distance;
+		}
+		
+	}
+	return minDistance;
 }
 };
 

@@ -151,6 +151,42 @@ public:Dynamic2DMapArray SetSand(Dynamic2DMapArray map, Vector2Int size, std::ve
 	}
 	return newMap;
 }
+public:Dynamic2DMapArray SetOceanDepth(Dynamic2DMapArray fullmap) {
+
+	Vector2Int size = fullmap.GetSize();
+	std::vector<Vector2Int> islandTiles;
+	for (int x = 0; x < size.x; x++) {
+		for (int y = 0; y < size.y; y++) {
+			if (fullmap.GetValue(x, y) == (int)TileType::Island) {
+				islandTiles.push_back(Vector2Int(x, y));
+			}
+		}
+	}
+
+	for (int x = 0; x < size.x; x++) {
+		for (int y = 0; y < size.y; y++) {
+			if (fullmap.GetValue(x, y) == (int)TileType::Water) {
+				int minDistance = GetDistanceToNearestIsland(Vector2Int(x, y), islandTiles);
+
+				if (minDistance < 6) {
+					fullmap.SetValue(x, y, (int)TileType::ShallowWater); 
+				}
+				else if (minDistance < 12) {
+					fullmap.SetValue(x, y, (int)TileType::MediumWater);
+				}
+				else if(minDistance < 15) {
+					fullmap.SetValue(x, y, (int)TileType::DeepWater);
+				}
+				else {
+					fullmap.SetValue(x, y, (int)TileType::Water);
+				}
+			}
+		}
+	}
+	return fullmap;
+
+
+}
 public:Chunk*** GenerateChunks(int gridSize, int chunkSize, int marginSize) {
 
 	Chunk*** chunks = new Chunk * *[gridSize];
@@ -169,11 +205,14 @@ public:Chunk*** GenerateChunks(int gridSize, int chunkSize, int marginSize) {
 			chunks[chunkX][chunkY]->map = ProccessMap(chunks[chunkX][chunkY]->map, 75, chunks[chunkX][chunkY]->regions);
 			chunks[chunkX][chunkY]->regions = GetRegions(chunks[chunkX][chunkY]->map);
 			chunks[chunkX][chunkY]->map = SetSand(chunks[chunkX][chunkY]->map, Vector2Int(chunkSize, chunkSize), chunks[chunkX][chunkY]->regions);
-		
+
 		}
+		
 	}
 	Dynamic2DMapArray fullmap = ConcatenateChunks(chunks, gridSize, chunkSize);
+	fullmap = SetOceanDepth(fullmap);
 	chunks = DivideIntoChunks(fullmap, gridSize, chunkSize);
+
 	return chunks;
 }
 

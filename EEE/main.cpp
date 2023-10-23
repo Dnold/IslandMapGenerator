@@ -11,9 +11,9 @@
 const int MARGIN_SIZE = 0;
 
 
-const int CHUNK_SIZE = 32;
-const int GRID_SIZE = 8;
-const int TILE_SIZE = 2;
+const int CHUNK_SIZE = 100;
+const int GRID_SIZE = 25;
+const int TILE_SIZE = 1;
 Chunk*** chunks;
 MapRenderer mapRenderer;
 MapGenerator mapGenerator;

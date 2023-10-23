@@ -67,4 +67,4 @@ public: Chunk(Vector2Int _size, int _id, Dynamic2DMapArray _map)
 };
 
 
-enum class TileType { Water = 0, Island = 1, Sand = 2, Border = 3 };
+enum class TileType { Water = 0, Island = 1, Sand = 2, Border = 3, DeepWater = 4, MediumWater = 5, ShallowWater = 6 };

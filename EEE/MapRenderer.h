@@ -20,11 +20,23 @@ class MapRenderer
 				  DrawRectangle(pos.x, pos.y, size, size, RED);
 			  }
 			  else if(value == (int)TileType::Water) {
-				  DrawRectangle(pos.x, pos.y, size, size, BLUE);
+				  DrawRectangle(pos.x, pos.y, size, size, DARKBLUE);
 			  }
 			  else if (value == (int)TileType::Sand) {
 				  DrawRectangle(pos.x, pos.y, size, size, YELLOW);
 			  }
+			  else if (value == (int)TileType::DeepWater) {
+				  DrawRectangle(pos.x, pos.y, size, size, DARKBLUE);
+
+			  }
+			  else if (value == (int)TileType::MediumWater) {
+				  DrawRectangle(pos.x, pos.y, size, size, BLUE);
+
+			  }
+			  else if (value == (int)TileType::ShallowWater) {
+				  DrawRectangle(pos.x, pos.y, size, size, GetColor(9552614));
+			  }
+			
 			  else {
 				  DrawRectangle(pos.x, pos.y, size, size, BLACK);
 			  }
