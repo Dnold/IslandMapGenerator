@@ -123,40 +123,57 @@ class MapGenerator : public MapGeneratorHelpers
 
 		return regions;
 	}
-	
-	public:Dynamic2DMapArray ProccessMap(Dynamic2DMapArray map, int threshold, std::vector<Region> regions) {
-		Dynamic2DMapArray newMap = map;
-		for (int i = 0; i < regions.size(); i++) {
-			Region region = regions[i];
-			if (region.tiles.size() < threshold) {
-				for (int j = 0; j < region.tiles.size(); j++) {
-					Vector2Int tile = region.tiles[j];
-					newMap.SetValue(tile.x, tile.y, (int)TileType::Water);
-				}
+
+public:Dynamic2DMapArray ProccessMap(Dynamic2DMapArray map, int threshold, std::vector<Region> regions) {
+	Dynamic2DMapArray newMap = map;
+	for (int i = 0; i < regions.size(); i++) {
+		Region region = regions[i];
+		if (region.tiles.size() < threshold) {
+			for (int j = 0; j < region.tiles.size(); j++) {
+				Vector2Int tile = region.tiles[j];
+				newMap.SetValue(tile.x, tile.y, (int)TileType::Water);
 			}
 		}
-		return newMap;
 	}
-	public:Chunk*** GenerateChunks(int gridSize, int chunkSize, int marginSize) {
+	return newMap;
+}
+public:Dynamic2DMapArray SetSand(Dynamic2DMapArray map, Vector2Int size, std::vector<Region> regions) {
 
-		Chunk*** chunks = new Chunk * *[gridSize];
-		for (int i = 0; i < gridSize; i++) {
-			chunks[i] = new Chunk * [gridSize];
-		}
-		for (int chunkX = 0; chunkX < gridSize; chunkX++) {
-			for (int chunkY = 0; chunkY < gridSize; chunkY++) {
-
-				(chunks[chunkX][chunkY]) = new Chunk(CreateRandomChunk(1, Vector2Int(chunkSize, chunkSize), marginSize));
-			
-				for (int i = 0; i < 2; i++) {
-					chunks[chunkX][chunkY]->map = SmoothMap(Vector2Int(chunkSize, chunkSize), chunks[chunkX][chunkY]->map);
-				}
-				chunks[chunkX][chunkY]->regions = GetRegions(chunks[chunkX][chunkY]->map);
-				chunks[chunkX][chunkY]->map = ProccessMap(chunks[chunkX][chunkY]->map, 20, chunks[chunkX][chunkY]->regions);
+	Dynamic2DMapArray newMap = map;
+	for (int i = 0; i < regions.size(); i++) {
+		Region region = regions[i];
+		for (int j = 0; j < region.tiles.size(); j++) {
+			Vector2Int tile = region.tiles[j];
+			if (GetNeighbourCount(tile.x, tile.y, map, size, TileType::Water) > 2) {
+				newMap.SetValue(tile.x, tile.y, (int)TileType::Sand);
 			}
 		}
-		return chunks;
 	}
+	return newMap;
+}
+public:Chunk*** GenerateChunks(int gridSize, int chunkSize, int marginSize) {
+
+	Chunk*** chunks = new Chunk * *[gridSize];
+	for (int i = 0; i < gridSize; i++) {
+		chunks[i] = new Chunk * [gridSize];
+	}
+	for (int chunkX = 0; chunkX < gridSize; chunkX++) {
+		for (int chunkY = 0; chunkY < gridSize; chunkY++) {
+
+			(chunks[chunkX][chunkY]) = new Chunk(CreateRandomChunk(1, Vector2Int(chunkSize, chunkSize), marginSize));
+
+			for (int i = 0; i < 2; i++) {
+				chunks[chunkX][chunkY]->map = SmoothMap(Vector2Int(chunkSize, chunkSize), chunks[chunkX][chunkY]->map);
+			}
+			chunks[chunkX][chunkY]->regions = GetRegions(chunks[chunkX][chunkY]->map);
+			chunks[chunkX][chunkY]->map = ProccessMap(chunks[chunkX][chunkY]->map, 20, chunks[chunkX][chunkY]->regions);
+			chunks[chunkX][chunkY]->regions = GetRegions(chunks[chunkX][chunkY]->map);
+			chunks[chunkX][chunkY]->map = SetSand(chunks[chunkX][chunkY]->map, Vector2Int(chunkSize, chunkSize), chunks[chunkX][chunkY]->regions);
+		}
+	}
+	return chunks;
+}
+
 
 };
 

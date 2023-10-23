@@ -22,6 +22,9 @@ class MapRenderer
 			  else if(value == (int)TileType::Water) {
 				  DrawRectangle(pos.x, pos.y, size, size, BLUE);
 			  }
+			  else if (value == (int)TileType::Sand) {
+				  DrawRectangle(pos.x, pos.y, size, size, YELLOW);
+			  }
 			  else {
 				  DrawRectangle(pos.x, pos.y, size, size, BLACK);
 			  }
