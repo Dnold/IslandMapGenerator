@@ -45,7 +45,7 @@ public:std::vector<Vector2Int> tiles;
 public:Vector2Int center;
 public:Vector2Int size;
 public:Region(Vector2Int _center, Vector2Int _size, std::vector<Vector2Int> _tiles) {
-	center = center;
+	center = _center;
 	size = _size;
 	tiles = _tiles;
 }

@@ -3,6 +3,7 @@
 #include "raylib.h"
 class MapRenderer
 {
+   // #011D43
 	MapGeneratorHelpers mapGenerator;
 	public:Vector2Int CalculateOffset(Vector2Int screenSize, Vector2Int totalGridSize) {
 
@@ -13,38 +14,44 @@ class MapRenderer
 		return Vector2Int(total, total);
 	}
 		  void DrawTile(Vector2 pos, int size, int value) {
-			  if (value == (int)TileType::Island) {
+			 
+			  Color DEEP_WATER = { 4, 61, 143, 255 }; // #043D8F
+			  Color MEDIUM_WATER = { 15, 157, 202, 255 }; // #0F9DCA
+			  Color SHALLOW_WATER = { 151, 222, 223, 255 }; // #97DEDF
+			  Color SAND = { 247, 237, 198, 255 };    // #F7EDC6
+			  switch (value) {
+			  case (int)TileType::Island:
 				  DrawRectangle(pos.x, pos.y, size, size, DARKGREEN);
-			  }
-			  else if (value == (int)TileType::Border) {
+				  break;
+			  case (int)TileType::Border:
 				  DrawRectangle(pos.x, pos.y, size, size, RED);
-			  }
-			  else if(value == (int)TileType::Water) {
-				  DrawRectangle(pos.x, pos.y, size, size, DARKBLUE);
-			  }
-			  else if (value == (int)TileType::Sand) {
-				  DrawRectangle(pos.x, pos.y, size, size, YELLOW);
-			  }
-			  else if (value == (int)TileType::DeepWater) {
-				  DrawRectangle(pos.x, pos.y, size, size, DARKBLUE);
-
-			  }
-			  else if (value == (int)TileType::MediumWater) {
-				  DrawRectangle(pos.x, pos.y, size, size, BLUE);
-
-			  }
-			  else if (value == (int)TileType::ShallowWater) {
-				  DrawRectangle(pos.x, pos.y, size, size, GetColor(9552614));
-			  }
-			
-			  else {
+				  break;
+			  case (int)TileType::Water:
+				  DrawRectangle(pos.x, pos.y, size, size, WATER);
+				  break;
+			  case (int)TileType::Sand:
+				  DrawRectangle(pos.x, pos.y, size, size, SAND);
+				  break;
+			  case (int)TileType::DeepWater:
+				  DrawRectangle(pos.x, pos.y, size, size, DEEP_WATER);
+				  break;
+			  case (int)TileType::MediumWater:
+				  DrawRectangle(pos.x, pos.y, size, size, MEDIUM_WATER);
+				  break;
+			  case (int)TileType::ShallowWater:
+				  DrawRectangle(pos.x, pos.y, size, size, SHALLOW_WATER);
+				  break;
+			  default:
 				  DrawRectangle(pos.x, pos.y, size, size, BLACK);
+				  break;
 			  }
+
+			  
 		  }
 		  void DrawChunk(Chunk* chunk, Vector2Int offset, int chunkSize, int tileSize) {
 			  for (int x = 0; x < chunkSize; x++) {
 				  for (int y = 0; y < chunkSize; y++) {
-					  DrawTile({ offset.x + (float)x * tileSize,offset.y + (float)y * tileSize }, tileSize, chunk->map.GetValue(x,y));
+					  DrawTile({ offset.x + (float)x * tileSize,offset.y + (float)y * tileSize }, tileSize, chunk->map.GetValue(x, y));
 
 				  }
 			  }
