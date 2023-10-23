@@ -16,7 +16,7 @@ class MapGenerator : public MapGeneratorHelpers
 		int value = rand() % 100;
 
 		// If the value is less than 60, return 1, else return 0.
-		return (value < 45) ? 1 : 0;
+		return (value < 48) ? 1 : 0;
 	}
 	Dynamic2DMapArray GenerateRandomMap(int width, int height, int marginSize) {
 		// Dynamically allocate memory for the 2D array
@@ -166,11 +166,14 @@ public:Chunk*** GenerateChunks(int gridSize, int chunkSize, int marginSize) {
 				chunks[chunkX][chunkY]->map = SmoothMap(Vector2Int(chunkSize, chunkSize), chunks[chunkX][chunkY]->map);
 			}
 			chunks[chunkX][chunkY]->regions = GetRegions(chunks[chunkX][chunkY]->map);
-			chunks[chunkX][chunkY]->map = ProccessMap(chunks[chunkX][chunkY]->map, 20, chunks[chunkX][chunkY]->regions);
+			chunks[chunkX][chunkY]->map = ProccessMap(chunks[chunkX][chunkY]->map, 75, chunks[chunkX][chunkY]->regions);
 			chunks[chunkX][chunkY]->regions = GetRegions(chunks[chunkX][chunkY]->map);
 			chunks[chunkX][chunkY]->map = SetSand(chunks[chunkX][chunkY]->map, Vector2Int(chunkSize, chunkSize), chunks[chunkX][chunkY]->regions);
+		
 		}
 	}
+	Dynamic2DMapArray fullmap = ConcatenateChunks(chunks, gridSize, chunkSize);
+	chunks = DivideIntoChunks(fullmap, gridSize, chunkSize);
 	return chunks;
 }
 
