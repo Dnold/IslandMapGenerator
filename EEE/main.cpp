@@ -3,17 +3,17 @@
 #include <ctime>
 #include <malloc.h>
 #include <chrono>
-#include "MapGenerator.h"
-#include "TileDefinitions.h"
-#include "MapRenderer.h"
-/*there are 2 ways of doing it.*/
-#include <iostream> // including the main thing needed
+#include "MapGenerator.hpp"
+
+#include "MapRenderer.hpp"
+
+#include <iostream>
 const int MARGIN_SIZE = 0;
 
 
-const int CHUNK_SIZE = 20;
+const int CHUNK_SIZE = 32;
 const int GRID_SIZE = 8;
-const int TILE_SIZE = 4;
+const int TILE_SIZE = 2;
 Chunk*** chunks;
 MapRenderer mapRenderer;
 MapGenerator mapGenerator;

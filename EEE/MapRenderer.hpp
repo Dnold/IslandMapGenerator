@@ -1,5 +1,5 @@
-#include "TileDefinitions.h"
-#include "MapGeneratorHelpers.h"
+#include "TileDefinitions.hpp"
+#include "MapGeneratorHelpers.hpp"
 #include "raylib.h"
 class MapRenderer
 {

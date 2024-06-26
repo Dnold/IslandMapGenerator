@@ -132,16 +132,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="MapGenerator.cpp" />
-    <ClCompile Include="MapGeneratorHelpers.cpp" />
-    <ClCompile Include="MapRenderer.cpp" />
-    <ClCompile Include="TileDefinitions.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="MapGenerator.h" />
-    <ClInclude Include="MapGeneratorHelpers.h" />
-    <ClInclude Include="MapRenderer.h" />
-    <ClInclude Include="TileDefinitions.h" />
+    <ClInclude Include="MapGenerator.hpp" />
+    <ClInclude Include="MapGeneratorHelpers.hpp" />
+    <ClInclude Include="MapRenderer.hpp" />
+    <ClInclude Include="TileDefinitions.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

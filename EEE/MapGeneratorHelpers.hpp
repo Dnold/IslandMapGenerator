@@ -1,18 +1,19 @@
 #pragma once
-#include "TileDefinitions.cpp"
+#include "TileDefinitions.hpp"
 #include <cstdlib>
 
 
 class MapGeneratorHelpers
 {
-	public:bool IsBorder(int x, int y, Vector2Int size) {
+	public:
+	bool IsBorder(int x, int y, Vector2Int size) {
 		return x == 0 || x == size.x - 1 || y == 0 || y == size.y - 1;
 	}
 
 		  bool IsInMapRange(int x, int y, const Vector2Int& size) {
 			  return x >= 0 && x < size.x && y >= 0 && y < size.y;
 		  }
-	protected:std::vector<Vector2Int> GetTilesWithinRadius(Dynamic2DMapArray map, Vector2Int center, int radius) {
+	std::vector<Vector2Int> GetTilesWithinRadius(Dynamic2DMapArray map, Vector2Int center, int radius) {
 			  std::vector<Vector2Int> result;
 			  for (int x = -radius; x <= radius; x++) {
 				  for (int y = -radius; y <= radius; y++) {
@@ -26,7 +27,7 @@ class MapGeneratorHelpers
 			  }
 			  return result;
 		  }
-	protected:int GetNeighbourCount(int gridX, int gridY, Dynamic2DMapArray map, const Vector2Int& size) {
+	int GetNeighbourCount(int gridX, int gridY, Dynamic2DMapArray map, const Vector2Int& size) {
 		int count = 0;
 		// Directions representing the 8 neighboring cells
 		int dirX[8] = { -1, 0, 1, -1, 1, -1, 0, 1 };
@@ -49,7 +50,7 @@ class MapGeneratorHelpers
 		}
 		return count;
 	}
-	protected:int GetNeighbourCount(int gridX, int gridY, Dynamic2DMapArray map, const Vector2Int& size, TileType targetTileType) {
+	int GetNeighbourCount(int gridX, int gridY, Dynamic2DMapArray map, const Vector2Int& size, TileType targetTileType) {
 		int count = 0;
 		// Directions representing the 8 neighboring cells
 		int dirX[8] = { -1, 0, 1, -1, 1, -1, 0, 1 };
@@ -69,7 +70,8 @@ class MapGeneratorHelpers
 		}
 		return count;
 	}
-	protected:Dynamic2DMapArray ConcatenateChunks(Chunk*** chunks, int gridSize, int chunkSize) {
+
+	Dynamic2DMapArray ConcatenateChunks(Chunk*** chunks, int gridSize, int chunkSize) {
 		int fullMapSize = gridSize * chunkSize;
 		Dynamic2DMapArray fullmap = Dynamic2DMapArray(Vector2Int(fullMapSize, fullMapSize));
 
@@ -85,7 +87,7 @@ class MapGeneratorHelpers
 		}
 		return fullmap;
 	}
-	protected:Chunk*** DivideIntoChunks(Dynamic2DMapArray fullmap, int gridSize, int chunkSize) {
+	Chunk*** DivideIntoChunks(Dynamic2DMapArray fullmap, int gridSize, int chunkSize) {
 
 
 		Chunk*** chunks = new Chunk * *[gridSize];
@@ -109,7 +111,7 @@ class MapGeneratorHelpers
 	}
 
 			 //LEGACY
-	protected: int GetDistanceToNearestIsland(Vector2Int pos, std::vector<Vector2Int> islandTilePos) {
+	int GetDistanceToNearestIsland(Vector2Int pos, std::vector<Vector2Int> islandTilePos) {
 		int minDistance = INT32_MAX;
 		for (int i = 0; i < islandTilePos.size(); i++) {
 			Vector2Int tile = islandTilePos[i];
@@ -121,7 +123,8 @@ class MapGeneratorHelpers
 		}
 		return minDistance;
 	}
-		protected:std::vector<Vector2Int> GetBorderTilesForRegion(Region region, Dynamic2DMapArray map) {
+
+		std::vector<Vector2Int> GetBorderTilesForRegion(Region region, Dynamic2DMapArray map) {
 			std::vector<Vector2Int> borderTiles;
 			TileType waterTiles[] = { TileType::Water,TileType::ShallowWater,TileType::MediumWater,TileType::DeepWater };
 

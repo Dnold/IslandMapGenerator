@@ -1,10 +1,10 @@
-#include "MapGeneratorHelpers.h"
+#include "MapGeneratorHelpers.hpp"
 #include "raylib.h"
 #include <cstdlib>
 #include <ctime>
 #include <malloc.h>
 #include <chrono>
-#include "TileDefinitions.h"
+
 #include <queue>
 #include <iostream>
 
@@ -21,13 +21,13 @@ class MapGenerator : public MapGeneratorHelpers
 	Dynamic2DMapArray GenerateRandomMap(int width, int height, int marginSize) {
 		// Dynamically allocate memory for the 2D array
 		Dynamic2DMapArray map = Dynamic2DMapArray(Vector2Int(width, height));
-
+		Vector2Int size = map.GetSize();
 
 		// Fill the map with random tiles
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
 
-				if (x >= marginSize && x < width - marginSize && y >= marginSize && y < height - marginSize && !IsBorder(x, y, Vector2Int(width, height))) {
+				if (x >= marginSize && x < width - marginSize && y >= marginSize && y < height - marginSize && !IsBorder(x, y, size)) {
 
 					map.SetValue(x, y, GetRandomTile());
 				}
@@ -47,7 +47,7 @@ class MapGenerator : public MapGeneratorHelpers
 	Dynamic2DMapArray SmoothMap(Vector2Int size, Dynamic2DMapArray map) {
 		for (int x = 0; x < size.x; x++) {
 			for (int y = 0; y < size.y; y++) {
-				int neighbourCount = GetNeighbourCount(x, y, map, size);
+				int neighbourCount = MapGeneratorHelpers::GetNeighbourCount(x, y, map, size);
 
 				if (IsBorder(x, y, size)) {
 					continue;
@@ -115,7 +115,6 @@ class MapGenerator : public MapGeneratorHelpers
 			}
 		}
 
-		// Remember to delete the memory allocated for mapFlags
 		for (int i = 0; i < size.x; i++) {
 			delete[] mapFlags[i];
 		}
@@ -279,7 +278,7 @@ class MapGenerator : public MapGeneratorHelpers
 		Dynamic2DMapArray fullmap = ConcatenateChunks(chunks, gridSize, chunkSize);
 		std::vector<Region> regions = GetRegions(fullmap);
 		fullmap = SetOceanDepthInPhases(fullmap, regions);
-		fullmap = SetSand(fullmap, Vector2Int(chunkSize * gridSize, chunkSize*gridSize), regions);
+		//fullmap = SetSand(fullmap, Vector2Int(chunkSize * gridSize, chunkSize*gridSize), regions);
 		chunks = DivideIntoChunks(fullmap, gridSize, chunkSize);
 
 		return chunks;
