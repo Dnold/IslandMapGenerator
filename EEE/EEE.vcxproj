@@ -132,11 +132,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Player.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MapGenerator.hpp" />
     <ClInclude Include="MapGeneratorHelpers.hpp" />
     <ClInclude Include="MapRenderer.hpp" />
+    <ClInclude Include="Player.h" />
     <ClInclude Include="TileDefinitions.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

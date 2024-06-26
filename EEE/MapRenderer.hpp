@@ -5,7 +5,8 @@ class MapRenderer
 {
    // #011D43
 	MapGeneratorHelpers mapGenerator;
-	public:Vector2Int CalculateOffset(Vector2Int screenSize, Vector2Int totalGridSize) {
+	public:
+	Vector2Int CalculateOffset(Vector2Int screenSize, Vector2Int totalGridSize) {
 
 		return Vector2Int((screenSize.x - totalGridSize.x) / 2, (screenSize.y - totalGridSize.y) / 2);
 	}

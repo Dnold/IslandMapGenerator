@@ -3,7 +3,7 @@
 #include <stdexcept>
 #include <vector>
 
-	
+
 	struct Vector2Int
 	{
 		int x;
