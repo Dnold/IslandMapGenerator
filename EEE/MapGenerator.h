@@ -66,25 +66,29 @@ class MapGenerator : public MapGeneratorHelpers
 	}
 	std::vector<Vector2Int> GetRegionTiles(int x, int y, Dynamic2DMapArray map, int** mapFlags) {
 		Vector2Int size = map.GetSize();
-		std::vector<Vector2Int> tiles;
+		std::vector<Vector2Int> tiles; //Initialize the vector for the tiles in the region
 
-		mapFlags[x][y] = 1;
-		TileType currentTileType = (TileType)map.GetValue(x, y);
+		mapFlags[x][y] = 1; //Set the flag for the current tile to 1
+		TileType currentTileType = (TileType)map.GetValue(x, y); //Get the current tile type
 
-		std::queue<Vector2Int> queue;
-		queue.push(Vector2Int(x, y));
+		std::queue<Vector2Int> queue; //Initialize the queue for the tiles to be checked and add the current tile to it
+		queue.push(Vector2Int(x, y)); 
 
+		// Directions representing the 4 neighboring cells
 		int dirX[] = { 0, 0, 1, -1 };
 		int dirY[] = { 1, -1, 0, 0 };
 
+		// While the queue is not empty (there are still tiles to be checked)
 		while (queue.size() > 0) {
-			Vector2Int tile = queue.front();
-			queue.pop();
-			tiles.push_back(tile);
+			Vector2Int tile = queue.front(); //Get the first tile in the queue
+			queue.pop(); //Remove the first tile from the queue and move the rest forward
+			tiles.push_back(tile); //Add the tile to the region
 
+			// Check the 4 neighboring tiles
 			for (int i = 0; i < 4; i++) {
 				int neighbourX = tile.x + dirX[i];
 				int neighbourY = tile.y + dirY[i];
+				// If the neighbor is within map boundaries, check its status and add it to the queue if it is of the same type
 				if (IsInMapRange(neighbourX, neighbourY, size) && mapFlags[neighbourX][neighbourY] == 0 && map.GetValue(neighbourX, neighbourY) == (int)TileType::Island) {
 					mapFlags[neighbourX][neighbourY] = 1;
 					queue.push(Vector2Int(neighbourX, neighbourY));
@@ -96,7 +100,7 @@ class MapGenerator : public MapGeneratorHelpers
 	}
 
 	std::vector<Region> GetRegions(Dynamic2DMapArray map) {
-		std::vector<Region> regions;
+		std::vector<Region> regions; //Initialize the vector for the regions
 		Vector2Int size = map.GetSize();
 		int** mapFlags = new int* [size.x];
 		for (int i = 0; i < size.x; i++) {
@@ -115,7 +119,7 @@ class MapGenerator : public MapGeneratorHelpers
 			}
 		}
 
-		// Remember to delete the memory allocated for mapFlags
+		//delete the memory allocated for mapFlags
 		for (int i = 0; i < size.x; i++) {
 			delete[] mapFlags[i];
 		}
@@ -131,7 +135,7 @@ class MapGenerator : public MapGeneratorHelpers
 			if (region.tiles.size() < threshold) {
 				for (int j = 0; j < region.tiles.size(); j++) {
 					Vector2Int tile = region.tiles[j];
-					newMap.SetValue(tile.x, tile.y, (int)TileType::Water);
+					newMap.SetValue(tile.x, tile.y, (int)TileType::Island);
 				}
 			}
 		}
@@ -264,7 +268,11 @@ class MapGenerator : public MapGeneratorHelpers
 			for (int chunkY = 0; chunkY < gridSize; chunkY++) {
 
 				(chunks[chunkX][chunkY]) = new Chunk(CreateRandomChunk(1, Vector2Int(chunkSize, chunkSize), marginSize));
+<<<<<<< Updated upstream
 
+=======
+				
+>>>>>>> Stashed changes
 				for (int i = 0; i < 2; i++) {
 					chunks[chunkX][chunkY]->map = SmoothMap(Vector2Int(chunkSize, chunkSize), chunks[chunkX][chunkY]->map);
 				}
