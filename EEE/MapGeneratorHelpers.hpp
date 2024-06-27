@@ -10,23 +10,23 @@ class MapGeneratorHelpers
 		return x == 0 || x == size.x - 1 || y == 0 || y == size.y - 1;
 	}
 
-		  bool IsInMapRange(int x, int y, const Vector2Int& size) {
-			  return x >= 0 && x < size.x && y >= 0 && y < size.y;
-		  }
+	bool IsInMapRange(int x, int y, const Vector2Int& size) {
+		return x >= 0 && x < size.x && y >= 0 && y < size.y;
+	}
 	std::vector<Vector2Int> GetTilesWithinRadius(Dynamic2DMapArray map, Vector2Int center, int radius) {
-			  std::vector<Vector2Int> result;
-			  for (int x = -radius; x <= radius; x++) {
-				  for (int y = -radius; y <= radius; y++) {
-					  if (x * x + y * y <= radius * radius) {  // Check if within circular radius
-						  Vector2Int newPoint(center.x + x, center.y + y);
-						  if (IsInMapRange(newPoint.x, newPoint.y, map.GetSize())) {
-							  result.push_back(newPoint);
-						  }
-					  }
-				  }
-			  }
-			  return result;
-		  }
+		std::vector<Vector2Int> result;
+		for (int x = -radius; x <= radius; x++) {
+			for (int y = -radius; y <= radius; y++) {
+				if (x * x + y * y <= radius * radius) {  // Check if within circular radius
+					Vector2Int newPoint(center.x + x, center.y + y);
+					if (IsInMapRange(newPoint.x, newPoint.y, map.GetSize())) {
+						result.push_back(newPoint);
+					}
+				}
+			}
+		}
+		return result;
+	}
 	int GetNeighbourCount(int gridX, int gridY, Dynamic2DMapArray map, const Vector2Int& size) {
 		int count = 0;
 		// Directions representing the 8 neighboring cells
@@ -89,28 +89,62 @@ class MapGeneratorHelpers
 	}
 	TileType GetWaterDepthByPhase(int phase) {
 		switch (phase) {
-	
+
 		case 0:
 			return TileType::ShallowWater;
 		case 1:
-			return TileType::MediumWater;
+			return TileType::ShallowWater;
 		case 2:
+			return TileType::MediumWater;
+		case 3:
+			return TileType::MediumWater;
+		case 4:
 			return TileType::DeepWater;
+		case 5:
+			return TileType::DeepWater;
+		case 6:
+			return TileType::Water;
+		case 7:
+			return TileType::Water;
+		case 8:
+			return TileType::Water;
+		case 9:
+			return TileType::Water;
+		case 10:
+			return TileType::Water;
+		case 11:
+			return TileType::Water;
+		case 12:
+			return TileType::Water;
+		case 13:
+			return TileType::Water;
+		case 14:
+			return TileType::Water;
 		default:
 			return TileType::Water;
 		}
 	}
 	Vector2Int GetRangeDepths(int phase) {
 		switch (phase) {
-		
+
 		case 0:
-			return Vector2Int(1, 3);
+			return Vector2Int(0, 2);
 		case 1:
-			return Vector2Int(3, 8);
+			return Vector2Int(1, 3);
 		case 2:
-			return Vector2Int(9, 14);
+			return Vector2Int(4, 6);
+		case 3:
+			return Vector2Int(5, 7);
+		case 4:
+			return Vector2Int(8, 12);
+		case 5:
+			return Vector2Int(13, 16);
+		case 6:
+			return Vector2Int(17, 19);
+	
+		
 		default:
-			return Vector2Int(0, 0);
+			return Vector2Int(20, 100);
 		}
 	}
 	Chunk*** DivideIntoChunks(Dynamic2DMapArray fullmap, int gridSize, int chunkSize) {
@@ -133,7 +167,7 @@ class MapGeneratorHelpers
 							chunkMap.SetValue(x, y, fullmap.GetValue(newX, newY));
 						}
 						else {
-							
+
 						}
 					}
 				}
@@ -143,7 +177,7 @@ class MapGeneratorHelpers
 		return chunks;
 	}
 
-			 //LEGACY
+	//LEGACY
 	int GetDistanceToNearestIsland(Vector2Int pos, std::vector<Vector2Int> islandTilePos) {
 		int minDistance = INT32_MAX;
 		for (int i = 0; i < islandTilePos.size(); i++) {
@@ -157,26 +191,26 @@ class MapGeneratorHelpers
 		return minDistance;
 	}
 
-		std::vector<Vector2Int> GetBorderTilesForRegion(Region region, Dynamic2DMapArray map) {
-			std::vector<Vector2Int> borderTiles;
-			TileType waterTiles[] = { TileType::Water,TileType::ShallowWater,TileType::MediumWater,TileType::DeepWater,TileType::Sand };
+	std::vector<Vector2Int> GetBorderTilesForRegion(Region region, Dynamic2DMapArray map) {
+		std::vector<Vector2Int> borderTiles;
+		TileType waterTiles[] = { TileType::Water,TileType::ShallowWater,TileType::MediumWater,TileType::DeepWater,TileType::Sand };
 
-			
-			for (int i = 0; i < region.tiles.size(); i++) {
-				Vector2Int tile = region.tiles[i];
 
-				for (TileType a : waterTiles) {
-					if (GetNeighbourCount(tile.x, tile.y, map, map.GetSize(), a) > 0) {
-						borderTiles.push_back(tile);
-						break;
-					}
+		for (int i = 0; i < region.tiles.size(); i++) {
+			Vector2Int tile = region.tiles[i];
+
+			for (TileType a : waterTiles) {
+				if (GetNeighbourCount(tile.x, tile.y, map, map.GetSize(), a) > 0) {
+					borderTiles.push_back(tile);
+					break;
 				}
-				
 			}
 
-			return borderTiles;
 		}
-		
+
+		return borderTiles;
+	}
+
 };
 
 

@@ -8,17 +8,17 @@
 #include "MapRenderer.hpp"
 
 #include <iostream>
-const int MARGIN_SIZE = 0;
+const int MARGIN_SIZE = 3;
 bool isAnimatingForward = true;
 float timer = 0;
-float maxTime = 0.25f;
-float delayTime = 0.7f; 
+float maxTime = 0.1f;
+float delayTime = 0.4f; 
 float delayTimer = 0; 
 float currentPhase = 0;
-float maxPhase = 4;
+float maxPhase = 6;
 const int CHUNK_SIZE = 48;
 const int GRID_SIZE = 2;
-const int TILE_SIZE = 10;
+const int TILE_SIZE = 8;
 Player* player;
 Chunk*** chunks;
 Chunk*** originalChunks;
