@@ -16,7 +16,7 @@ class MapGenerator : public MapGeneratorHelpers
 		int value = rand() % 100;
 
 		// If the value is less than 60, return 1, else return 0.
-		return (value < 53) ? 1 : 0;
+		return (value < 45) ? 1 : 0;
 	}
 	Dynamic2DMapArray GenerateRandomMap(int width, int height, int marginSize) {
 		// Dynamically allocate memory for the 2D array
@@ -64,6 +64,16 @@ class MapGenerator : public MapGeneratorHelpers
 		}
 		return map;
 	}
+	public:
+	std::vector<Rectangle> GetRegionRectangles(std::vector<Vector2Int> tiles, int tileSize) {
+		std::vector<Rectangle> rects;
+		for (int i = 0; i < tiles.size();i++) {
+			Rectangle rect = GetRectangleFromTile(tiles[i], tileSize);
+			rects.push_back(rect);
+		}
+		return rects;
+	}
+	public:
 	std::vector<Vector2Int> GetRegionTiles(int x, int y, Dynamic2DMapArray map, int** mapFlags) {
 		Vector2Int size = map.GetSize();
 		std::vector<Vector2Int> tiles;
@@ -260,7 +270,7 @@ class MapGenerator : public MapGeneratorHelpers
 		Vector2Int depthRange = GetRangeDepths(phase);
 		TileType targetType = GetWaterDepthByPhase(phase);
 
-		
+
 
 		// Anwenden der aktuellen Phase auf alle Regionen
 		for (Region& region : regions) {
@@ -275,14 +285,16 @@ class MapGenerator : public MapGeneratorHelpers
 		return newMap;
 
 	}
-		 
-		 
+
+
 	public: Chunk*** AnimateChunks(Chunk*** chunks, int gridSize, int chunkSize, int phase) {
 		Dynamic2DMapArray fullmap = ConcatenateChunks(chunks, gridSize, chunkSize);
 		fullmap = SetOceanDepthInPhases(fullmap, GetRegions(fullmap), phase);
 		chunks = DivideIntoChunks(fullmap, gridSize, chunkSize);
 		return chunks;
 	}
+	public:
+	std::vector<Region> regions;
 	public:Chunk*** GenerateChunks(int gridSize, int chunkSize, int marginSize) {
 
 		Chunk*** chunks = new Chunk * *[gridSize];
@@ -306,7 +318,7 @@ class MapGenerator : public MapGeneratorHelpers
 
 		}
 		Dynamic2DMapArray fullmap = ConcatenateChunks(chunks, gridSize, chunkSize);
-		std::vector<Region> regions = GetRegions(fullmap);
+		regions = GetRegions(fullmap);
 
 		chunks = DivideIntoChunks(fullmap, gridSize, chunkSize);
 

@@ -13,6 +13,9 @@ class MapGeneratorHelpers
 	bool IsInMapRange(int x, int y, const Vector2Int& size) {
 		return x >= 0 && x < size.x && y >= 0 && y < size.y;
 	}
+	Rectangle GetRectangleFromTile(Vector2Int tile, int tileSize) {
+		return {(float)tile.x * tileSize, (float)tile.y * tileSize, (float)tileSize, (float)tileSize};
+	}
 	std::vector<Vector2Int> GetTilesWithinRadius(Dynamic2DMapArray map, Vector2Int center, int radius) {
 		std::vector<Vector2Int> result;
 		for (int x = -radius; x <= radius; x++) {

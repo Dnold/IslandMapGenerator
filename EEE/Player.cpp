@@ -1,6 +1,6 @@
 #include "Player.h"
 Player::Player() {
-	pos = Vector2Int(0, 0);
+	pos = Vector2Int(100, 100);
 	speed = 1.0f;
 	moveDir = Vector2Int(0, 1);
 }
@@ -31,16 +31,19 @@ void Player::Move() {
 	pos.y += moveDir.y * speed;
 }
 void Player::Draw() {
-	if(moveDir.x == 1 || moveDir.x == -1) DrawRectangle(pos.x-20, pos.y+10, 20, 10, BROWN);
-	else {
-		DrawRectangle(pos.x-10, pos.y+10, 10, 20, BROWN);
-	}
 	
+	if (moveDir.x == 1 || moveDir.x == -1) {
+		rect = { (float)pos.x - 8, (float)pos.y + 8, 16, 8 };
+	}
+	else {
+		rect = {(float)pos.x - 8, (float)pos.y + 8, 8, 16};
+	}
+	DrawRectangleRec(rect,BROWN);
 }
 void Player::Update() {
 	Draw();
 	Move();
-	if(IsKeyPressed(KEY_RIGHT)) ChangeMoveDir(1);
-	if(IsKeyPressed(KEY_LEFT)) ChangeMoveDir(-1);
+	if (IsKeyPressed(KEY_RIGHT)) ChangeMoveDir(1);
+	if (IsKeyPressed(KEY_LEFT)) ChangeMoveDir(-1);
 }
 

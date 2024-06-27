@@ -7,6 +7,7 @@ class Player
 	Vector2Int pos;
 	float speed;
 	Vector2Int moveDir;
+	Rectangle rect;
 	Player();
 	Player(Vector2Int _pos, float _speed);
 	~Player();
