@@ -16,7 +16,7 @@ class MapGenerator : public MapGeneratorHelpers
 		int value = rand() % 100;
 
 		// If the value is less than 60, return 1, else return 0.
-		return (value <52) ? 1 : 0;
+		return (value < 52) ? 1 : 0;
 	}
 	Dynamic2DMapArray GenerateRandomMap(int width, int height, int marginSize) {
 		// Dynamically allocate memory for the 2D array
@@ -149,7 +149,7 @@ class MapGenerator : public MapGeneratorHelpers
 						newMap.SetValue(tile.x, tile.y, (int)TileType::Sand);
 					}
 				}
-				
+
 			}
 		}
 		return newMap;
@@ -209,50 +209,80 @@ class MapGenerator : public MapGeneratorHelpers
 				int neighbourY = currentTile.pos.y + dirY[i];
 				if (IsInMapRange(neighbourX, neighbourY, map.GetSize())) {
 					int newDepth = currentTile.depth + 1;
-						if (newDepth < maxDepth && map.GetValue(neighbourX, neighbourY) == (int)TileType::Water) {
-							newMap.SetValue(neighbourX, neighbourY, (int)targetType);
-							tilesToCheck.push({ Vector2Int(neighbourX, neighbourY), newDepth });
-						}
+					if (newDepth < maxDepth && map.GetValue(neighbourX, neighbourY) == (int)TileType::Water) {
+						newMap.SetValue(neighbourX, neighbourY, (int)targetType);
+						tilesToCheck.push({ Vector2Int(neighbourX, neighbourY), newDepth });
+					}
 				}
 			}
 		}
 		return newMap;
 	}
-			public:Dynamic2DMapArray SetOceanDepthInPhases(Dynamic2DMapArray map, std::vector<Region> regions) {
-				Dynamic2DMapArray newMap = map;
+		  //public:Dynamic2DMapArray SetOceanDepthInPhases(Dynamic2DMapArray map, std::vector<Region> regions) {
+		  //	Dynamic2DMapArray newMap = map;
 
-				// Phase 1: Shallow Water
-				for (Region& region : regions) {
-					std::vector<Vector2Int> borderTiles = GetBorderTilesForRegion(region, map);
-					for (Vector2Int& tile : borderTiles) {
-						newMap = FloodFillLayeredDepth(map, tile.x, tile.y, 0, 4, TileType::ShallowWater);
-					}
+		  //	// Phase 1: Shallow Water
+		  //	for (Region& region : regions) {
+		  //		std::vector<Vector2Int> borderTiles = GetBorderTilesForRegion(region, map);
+		  //		for (Vector2Int& tile : borderTiles) {
+		  //			newMap = FloodFillLayeredDepth(map, tile.x, tile.y, 0, 4, TileType::ShallowWater);
+		  //		}
+		  //	}
+
+		  //	// Phase 2: Medium Water
+		  //	for (Region& region : regions) {
+		  //		std::vector<Vector2Int> borderTiles = GetBorderTilesForRegion(region, map);
+		  //		for (Vector2Int& tile : borderTiles) {
+		  //			std::vector<Vector2Int> extendedTiles = GetTilesWithinRadius(map, tile, 4);
+		  //			for (Vector2Int& extendedTile : extendedTiles) {
+		  //				newMap = FloodFillLayeredDepth(map, extendedTile.x, extendedTile.y, 4, 8, TileType::MediumWater);
+		  //			}
+		  //		}
+		  //	}
+
+		  //	// Phase 3: Deep Water
+		  //	for (Region& region : regions) {
+		  //		std::vector<Vector2Int> borderTiles = GetBorderTilesForRegion(region, map);
+		  //		for (Vector2Int& tile : borderTiles) {
+		  //			std::vector<Vector2Int> extendedTiles = GetTilesWithinRadius(map, tile, 8);
+		  //			for (Vector2Int& extendedTile : extendedTiles) {
+		  //				newMap = FloodFillLayeredDepth(map, extendedTile.x, extendedTile.y, 8, 14, TileType::DeepWater);
+		  //			}
+		  //		}
+		  //	}
+
+		  //	return newMap;
+		  //}
+	public:Dynamic2DMapArray SetOceanDepthInPhases(Dynamic2DMapArray map, std::vector<Region> regions, int phase) {
+
+
+		Dynamic2DMapArray newMap = map;
+		Vector2Int depthRange = GetRangeDepths(phase);
+		TileType targetType = GetWaterDepthByPhase(phase);
+
+		
+
+		// Anwenden der aktuellen Phase auf alle Regionen
+		for (Region& region : regions) {
+			std::vector<Vector2Int> borderTiles = GetBorderTilesForRegion(region, map);
+			for (Vector2Int& tile : borderTiles) {
+				std::vector<Vector2Int> extendedTiles = GetTilesWithinRadius(map, tile, depthRange.x);
+				for (Vector2Int& extendedTile : extendedTiles) {
+					newMap = FloodFillLayeredDepth(map, extendedTile.x, extendedTile.y, depthRange.x, depthRange.y, targetType);
 				}
-
-				// Phase 2: Medium Water
-				for (Region& region : regions) {
-					std::vector<Vector2Int> borderTiles = GetBorderTilesForRegion(region, map);
-					for (Vector2Int& tile : borderTiles) {
-						std::vector<Vector2Int> extendedTiles = GetTilesWithinRadius(map, tile, 4);
-						for (Vector2Int& extendedTile : extendedTiles) {
-							newMap = FloodFillLayeredDepth(map, extendedTile.x, extendedTile.y, 4, 8, TileType::MediumWater);
-						}
-					}
-				}
-
-				// Phase 3: Deep Water
-				for (Region& region : regions) {
-					std::vector<Vector2Int> borderTiles = GetBorderTilesForRegion(region, map);
-					for (Vector2Int& tile : borderTiles) {
-						std::vector<Vector2Int> extendedTiles = GetTilesWithinRadius(map, tile, 8);
-						for (Vector2Int& extendedTile : extendedTiles) {
-							newMap = FloodFillLayeredDepth(map, extendedTile.x, extendedTile.y, 8, 14, TileType::DeepWater);
-						}
-					}
-				}
-
-				return newMap;
 			}
+		}
+		return newMap;
+
+	}
+		 
+		 
+	public: Chunk*** AnimateChunks(Chunk*** chunks, int gridSize, int chunkSize, int phase) {
+		Dynamic2DMapArray fullmap = ConcatenateChunks(chunks, gridSize, chunkSize);
+		fullmap = SetOceanDepthInPhases(fullmap, GetRegions(fullmap), phase);
+		chunks = DivideIntoChunks(fullmap, gridSize, chunkSize);
+		return chunks;
+	}
 	public:Chunk*** GenerateChunks(int gridSize, int chunkSize, int marginSize) {
 
 		Chunk*** chunks = new Chunk * *[gridSize];
@@ -277,8 +307,7 @@ class MapGenerator : public MapGeneratorHelpers
 		}
 		Dynamic2DMapArray fullmap = ConcatenateChunks(chunks, gridSize, chunkSize);
 		std::vector<Region> regions = GetRegions(fullmap);
-		fullmap = SetOceanDepthInPhases(fullmap, regions);
-		//fullmap = SetSand(fullmap, Vector2Int(chunkSize * gridSize, chunkSize*gridSize), regions);
+
 		chunks = DivideIntoChunks(fullmap, gridSize, chunkSize);
 
 		return chunks;

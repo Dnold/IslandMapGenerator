@@ -87,6 +87,32 @@ class MapGeneratorHelpers
 		}
 		return fullmap;
 	}
+	TileType GetWaterDepthByPhase(int phase) {
+		switch (phase) {
+	
+		case 0:
+			return TileType::ShallowWater;
+		case 1:
+			return TileType::MediumWater;
+		case 2:
+			return TileType::DeepWater;
+		default:
+			return TileType::Water;
+		}
+	}
+	Vector2Int GetRangeDepths(int phase) {
+		switch (phase) {
+		
+		case 0:
+			return Vector2Int(1, 3);
+		case 1:
+			return Vector2Int(3, 8);
+		case 2:
+			return Vector2Int(9, 14);
+		default:
+			return Vector2Int(0, 0);
+		}
+	}
 	Chunk*** DivideIntoChunks(Dynamic2DMapArray fullmap, int gridSize, int chunkSize) {
 
 
@@ -101,7 +127,14 @@ class MapGeneratorHelpers
 				for (int x = 0; x < chunkSize; x++) {
 					for (int y = 0; y < chunkSize; y++) {
 
-						chunkMap.SetValue(x, y, fullmap.GetValue(cx * chunkSize + x, cy * chunkSize + y));
+						int newX = cx * chunkSize + x;
+						int newY = cy * chunkSize + y;
+						if (newX >= 0 && newX < fullmap.GetSize().x && newY >= 0 && newY < fullmap.GetSize().y) {
+							chunkMap.SetValue(x, y, fullmap.GetValue(newX, newY));
+						}
+						else {
+							
+						}
 					}
 				}
 				chunks[cx][cy] = new Chunk(Vector2Int(chunkSize, chunkSize), 1, chunkMap);
@@ -126,7 +159,7 @@ class MapGeneratorHelpers
 
 		std::vector<Vector2Int> GetBorderTilesForRegion(Region region, Dynamic2DMapArray map) {
 			std::vector<Vector2Int> borderTiles;
-			TileType waterTiles[] = { TileType::Water,TileType::ShallowWater,TileType::MediumWater,TileType::DeepWater };
+			TileType waterTiles[] = { TileType::Water,TileType::ShallowWater,TileType::MediumWater,TileType::DeepWater,TileType::Sand };
 
 			
 			for (int i = 0; i < region.tiles.size(); i++) {
@@ -143,6 +176,7 @@ class MapGeneratorHelpers
 
 			return borderTiles;
 		}
+		
 };
 
 
