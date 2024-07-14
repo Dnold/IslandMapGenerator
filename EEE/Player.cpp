@@ -3,11 +3,12 @@ Player::Player() {
 	pos = Vector2Int(100, 100);
 	speed = 1.0f;
 	moveDir = Vector2Int(0, 1);
+	rect = { (float)pos.x,(float)pos.y,8,8 };
 }
 Player::Player(Vector2Int _pos, float _speed) {
 	pos = _pos;
 	speed = _speed;
-	moveDir = Vector2Int(0, 1);
+	moveDir = Vector2Int(0, 0);
 }
 Player::~Player() {
 
@@ -26,24 +27,28 @@ void Player::ChangeMoveDir(float xRotationInput) {
 		moveDir.y = -temp.x;
 	}
 }
+Vector2Int Player::PredictMove() {
+	Vector2Int playerPos = pos;
+	playerPos.x += moveDir.x * speed*2;
+	playerPos.y += moveDir.y * speed*2;
+	return playerPos;
+}
 void Player::Move() {
 	pos.x += moveDir.x * speed;
 	pos.y += moveDir.y * speed;
 }
 void Player::Draw() {
-	
+
 	if (moveDir.x == 1 || moveDir.x == -1) {
 		rect = { (float)pos.x - 8, (float)pos.y + 8, 16, 8 };
 	}
 	else {
-		rect = {(float)pos.x - 8, (float)pos.y + 8, 8, 16};
+		rect = { (float)pos.x - 8, (float)pos.y + 8, 8, 16 };
 	}
-	DrawRectangleRec(rect,BROWN);
+	DrawRectangleRec(rect, BROWN);
 }
 void Player::Update() {
 	Draw();
-	Move();
-	if (IsKeyPressed(KEY_RIGHT)) ChangeMoveDir(1);
-	if (IsKeyPressed(KEY_LEFT)) ChangeMoveDir(-1);
+
 }
 

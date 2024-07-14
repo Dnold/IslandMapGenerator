@@ -13,6 +13,7 @@ class Player
 	~Player();
 	void ChangeMoveDir(float xRotationInput);
 	void Move();
+	Vector2Int PredictMove();
 	void Update();
 	void Draw();
 };

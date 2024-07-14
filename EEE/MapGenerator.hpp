@@ -65,10 +65,16 @@ class MapGenerator : public MapGeneratorHelpers
 		return map;
 	}
 	public:
-	std::vector<Rectangle> GetRegionRectangles(std::vector<Vector2Int> tiles, int tileSize) {
+	std::vector<Rectangle> GetRegionRectangles(std::vector<Vector2Int> tiles, int tileSize, Vector2 offset) {
 		std::vector<Rectangle> rects;
-		for (int i = 0; i < tiles.size();i++) {
-			Rectangle rect = GetRectangleFromTile(tiles[i], tileSize);
+		for (int i = 0; i < tiles.size(); i++) {
+			// Convert tile position to pixel position
+			Vector2 pixelPosition = {tiles[i].x*4 , tiles[i].y*4};
+			// Apply the pixel-based offset
+			pixelPosition.x += offset.x;
+			pixelPosition.y += offset.y;
+			// Create a rectangle at the new pixel position
+			Rectangle rect = { pixelPosition.x, pixelPosition.y, 4, 4 };
 			rects.push_back(rect);
 		}
 		return rects;

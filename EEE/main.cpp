@@ -16,9 +16,10 @@ float delayTime = 1.0f;
 float delayTimer = 0;
 float currentPhase = 0;
 float maxPhase = 6;
-const int CHUNK_SIZE = 256;
-const int GRID_SIZE = 1;
+const int CHUNK_SIZE = 64;
+const int GRID_SIZE = 2;
 const int TILE_SIZE = 4;
+Vector2 offset;
 Player* player;
 Chunk*** chunks;
 Chunk*** originalChunks;
@@ -52,7 +53,9 @@ void Start() {
 			islandTilePos.push_back(regions[i].tiles[j]);
 		}
 	}
-	islandRects = mapGenerator.GetRegionRectangles(islandTilePos, TILE_SIZE);
+	Vector2Int totalGridSize = mapRenderer.GetTotalGridSize(CHUNK_SIZE, GRID_SIZE, TILE_SIZE);
+	offset = mapRenderer.CalculateOffset({ GetScreenWidth(), GetScreenHeight() }, totalGridSize);
+	islandRects = mapGenerator.GetRegionRectangles(islandTilePos, totalGridSize.x, offset);
 }
 //Is called once per frame
 void Update() {
@@ -91,18 +94,21 @@ void Update() {
 	// Verwenden Sie die zwischengespeicherten Phasen
 	chunks = chunkPhases[currentPhase];
 
-	Vector2Int totalGridSize = mapRenderer.GetTotalGridSize(CHUNK_SIZE, GRID_SIZE, TILE_SIZE);
-	Vector2Int offset = mapRenderer.CalculateOffset({ GetScreenWidth(), GetScreenHeight() }, totalGridSize);
+	
 	mapRenderer.DrawChunkGrid(chunks, offset.x, offset.y, CHUNK_SIZE, GRID_SIZE, TILE_SIZE);
+	
+	if (IsKeyPressed(KEY_RIGHT)) player->ChangeMoveDir(1);
+	if (IsKeyPressed(KEY_LEFT)) player->ChangeMoveDir(-1);
+
 	player->Update();
+
+	player->Move();
+
 	Rectangle playerRect = player->rect;
 	for (int i = 0; i < islandRects.size(); i++) {
 		
-		if (CheckCollisionRecs(playerRect, islandRects[i])) {
-			DrawText("AHHHHHHHHHHHHHHHHHH DEAATAATATTATTTHHHH", 300, 300, 40, RED);
-			break;
-		}
 	}
+	
 	DrawRectangleLines((float)playerRect.x,(float)playerRect.y,playerRect.width,playerRect.height, RED);
 	DrawFPS(10, 10);
 	EndDrawing();
@@ -110,10 +116,7 @@ void Update() {
 //Things for when the program ends
 void End() {
 	// Deallocate memory at the end
-
-
 	CloseWindow();
-
 }
 
 int main(void) {

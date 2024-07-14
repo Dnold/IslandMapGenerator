@@ -6,9 +6,9 @@ class MapRenderer
    // #011D43
 	MapGeneratorHelpers mapGenerator;
 	public:
-	Vector2Int CalculateOffset(Vector2Int screenSize, Vector2Int totalGridSize) {
+	Vector2 CalculateOffset(Vector2Int screenSize, Vector2Int totalGridSize) {
 
-		return Vector2Int((screenSize.x - totalGridSize.x) / 2, (screenSize.y - totalGridSize.y) / 2);
+		return { (float)(screenSize.x - totalGridSize.x) / 2, (float)(screenSize.y - totalGridSize.y) / 2 };
 	}
 	public:Vector2Int GetTotalGridSize(int chunkSize, int gridSize, int tileSize) {
 		int total = chunkSize * gridSize * tileSize;
@@ -20,6 +20,7 @@ class MapRenderer
 			  Color MEDIUM_WATER = { 15, 157, 202, 255 }; // #0F9DCA
 			  Color SHALLOW_WATER = { 151, 222, 223, 255 }; // #97DEDF
 			  Color SAND = { 247, 237, 198, 255 };    // #F7EDC6
+			  Color WATER = { 8, 26, 89 ,255 };// #0000FF
 			  switch (value) {
 			  case (int)TileType::Island:
 				  DrawRectangle(pos.x, pos.y, size, size, DARKGREEN);
@@ -65,7 +66,7 @@ class MapRenderer
 				Vector2Int offset = { (int)offsetX + (chunkX * chunkSize * tileSize),
 						  (int)offsetY + (chunkY * chunkSize * tileSize) };
 				DrawChunk(chunks[chunkX][chunkY], offset, chunkSize, tileSize);
-
+				//Nice
 			}
 		}
 	}
