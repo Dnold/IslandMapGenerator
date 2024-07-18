@@ -1,10 +1,11 @@
+#pragma once
 #include "MapGeneratorHelpers.hpp"
 #include "raylib.h"
 #include <cstdlib>
 #include <ctime>
 #include <malloc.h>
 #include <chrono>
-
+#include "raymath.h"
 #include <queue>
 #include <iostream>
 
@@ -38,6 +39,7 @@ class MapGenerator : public MapGeneratorHelpers
 		}
 		return map;
 	}
+
 	Chunk CreateRandomChunk(int _id, Vector2Int _size, int marginSize) {
 
 		Chunk chunk = Chunk(_size, _id, GenerateRandomMap(_size.x, _size.y, marginSize));
@@ -47,11 +49,12 @@ class MapGenerator : public MapGeneratorHelpers
 	Dynamic2DMapArray SmoothMap(Vector2Int size, Dynamic2DMapArray map) {
 		for (int x = 0; x < size.x; x++) {
 			for (int y = 0; y < size.y; y++) {
-				int neighbourCount = MapGeneratorHelpers::GetNeighbourCount(x, y, map, size);
-
 				if (IsBorder(x, y, size)) {
 					continue;
 				}
+
+				int neighbourCount = MapGeneratorHelpers::GetNeighbourCount(x, y, map, size);
+
 				if (neighbourCount > 4)
 				{
 					map.SetValue(x, y, (int)TileType::Island);  // Convert to the target tile type
@@ -69,15 +72,63 @@ class MapGenerator : public MapGeneratorHelpers
 		std::vector<Rectangle> rects;
 		for (int i = 0; i < tiles.size(); i++) {
 			// Convert tile position to pixel position
-			Vector2 pixelPosition = {tiles[i].x*4 , tiles[i].y*4};
+			Vector2 pixelPosition = { tiles[i].x * 15 , tiles[i].y * 15 };
 			// Apply the pixel-based offset
 			pixelPosition.x += offset.x;
 			pixelPosition.y += offset.y;
 			// Create a rectangle at the new pixel position
-			Rectangle rect = { pixelPosition.x, pixelPosition.y, 4, 4 };
+			Rectangle rect = { pixelPosition.x, pixelPosition.y, 15, 15 };
 			rects.push_back(rect);
 		}
 		return rects;
+	}
+	std::pair<Vector2Int, Vector2Int> ValidateMap(Dynamic2DMapArray& map) {
+		Vector2Int size = map.GetSize();
+		std::vector<Vector2Int> directions = { {0, 1}, {1, 0}, {-1, 0}, {0, -1} };
+		std::vector<Vector2Int> visited;
+		std::queue<Vector2Int> queue;
+
+		for (int attempt = 0; attempt < size.x; ++attempt) {
+			visited.clear();
+			while (!queue.empty()) queue.pop();
+
+			int startX = rand() % size.x;
+			// Überprüfen, ob das Tile irgendeine Art von Wasser ist
+			TileType tileType = (TileType)map.GetValue(startX, 0);
+			if (!(tileType == TileType::Water || tileType == TileType::DeepWater || tileType == TileType::MediumWater || tileType == TileType::ShallowWater)) continue;
+
+			queue.push(Vector2Int(startX, 0));
+			visited.push_back(Vector2Int(startX, 0));
+
+			while (!queue.empty()) {
+				Vector2Int current = queue.front();
+				queue.pop();
+
+				if (current.y == size.y - 1) {
+					// Markieren des End-Tiles
+					map.SetValue(current.x, current.y, (int)TileType::EndTile);
+					// Markieren des Start-Tiles
+					map.SetValue(startX, 0, (int)TileType::StartTile);
+					return { {startX, 0}, {current.x, current.y} };
+				}
+
+				for (auto& dir : directions) {
+					Vector2Int next = { current.x + dir.x, current.y + dir.y };
+					if (next.x >= 0 && next.x < size.x && next.y >= 0 && next.y < size.y) {
+						TileType nextTileType = (TileType)map.GetValue(next.x, next.y);
+						if (std::find(visited.begin(), visited.end(), next) == visited.end() &&
+							(nextTileType == TileType::Water || nextTileType == TileType::DeepWater || nextTileType == TileType::MediumWater || nextTileType == TileType::ShallowWater)) {
+							queue.push(next);
+							visited.push_back(next);
+						}
+					}
+				}
+			}
+		}
+
+		// Logik, um zu handeln, wenn kein Pfad gefunden wurde
+		std::cerr << "Kein gültiger Pfad gefunden." << std::endl;
+		return { {}, {} };
 	}
 	public:
 	std::vector<Vector2Int> GetRegionTiles(int x, int y, Dynamic2DMapArray map, int** mapFlags) {
@@ -101,7 +152,7 @@ class MapGenerator : public MapGeneratorHelpers
 			for (int i = 0; i < 4; i++) {
 				int neighbourX = tile.x + dirX[i];
 				int neighbourY = tile.y + dirY[i];
-				if (IsInMapRange(neighbourX, neighbourY, size) && mapFlags[neighbourX][neighbourY] == 0 && map.GetValue(neighbourX, neighbourY) == (int)TileType::Island) {
+				if (IsInMapRanger(neighbourX, neighbourY, size) && mapFlags[neighbourX][neighbourY] == 0 && map.GetValue(neighbourX, neighbourY) == (int)TileType::Island) {
 					mapFlags[neighbourX][neighbourY] = 1;
 					queue.push(Vector2Int(neighbourX, neighbourY));
 				}
@@ -223,7 +274,7 @@ class MapGenerator : public MapGeneratorHelpers
 			for (int i = 0; i < 4; i++) {
 				int neighbourX = currentTile.pos.x + dirX[i];
 				int neighbourY = currentTile.pos.y + dirY[i];
-				if (IsInMapRange(neighbourX, neighbourY, map.GetSize())) {
+				if (IsInMapRanger(neighbourX, neighbourY, map.GetSize())) {
 					int newDepth = currentTile.depth + 1;
 					if (newDepth < maxDepth && map.GetValue(neighbourX, neighbourY) == (int)TileType::Water) {
 						newMap.SetValue(neighbourX, neighbourY, (int)targetType);
@@ -301,7 +352,7 @@ class MapGenerator : public MapGeneratorHelpers
 	}
 	public:
 	std::vector<Region> regions;
-	public:Chunk*** GenerateChunks(int gridSize, int chunkSize, int marginSize) {
+	public:std::pair<Chunk***, std::pair<Vector2Int, Vector2Int>> GenerateChunks(int gridSize, int chunkSize, int marginSize) {
 
 		Chunk*** chunks = new Chunk * *[gridSize];
 		for (int i = 0; i < gridSize; i++) {
@@ -316,19 +367,57 @@ class MapGenerator : public MapGeneratorHelpers
 					chunks[chunkX][chunkY]->map = SmoothMap(Vector2Int(chunkSize, chunkSize), chunks[chunkX][chunkY]->map);
 				}
 				chunks[chunkX][chunkY]->regions = GetRegions(chunks[chunkX][chunkY]->map);
-				chunks[chunkX][chunkY]->map = ProccessMap(chunks[chunkX][chunkY]->map, 40, chunks[chunkX][chunkY]->regions);
+				chunks[chunkX][chunkY]->map = ProccessMap(chunks[chunkX][chunkY]->map, 12, chunks[chunkX][chunkY]->regions);
 				chunks[chunkX][chunkY]->regions = GetRegions(chunks[chunkX][chunkY]->map);
 
 
 			}
-
 		}
+
 		Dynamic2DMapArray fullmap = ConcatenateChunks(chunks, gridSize, chunkSize);
 		regions = GetRegions(fullmap);
+		std::pair<Vector2Int, Vector2Int> startEnd = ValidateMap(fullmap);
+		if (startEnd == std::pair<Vector2Int, Vector2Int>({}, {}))
+		{
+			return GenerateChunks(gridSize, chunkSize, marginSize);
+		}
 
 		chunks = DivideIntoChunks(fullmap, gridSize, chunkSize);
 
-		return chunks;
+		return std::pair<Chunk***, std::pair<Vector2Int, Vector2Int>>(chunks, startEnd);
+	}
+		  std::vector<Rectangle> SpawnChestsRandomChestOnWater(Dynamic2DMapArray map, Vector2Int size, int numOfChests) {
+			  std::srand(std::time(nullptr)); // Zufallsgenerator initialisieren
+			  std::vector<Rectangle> rects = std::vector<Rectangle>();
+			  while (numOfChests > 0) {
+				  int x = std::rand() % size.x; // Zufällige X-Position
+				  int y = std::rand() % size.y; // Zufällige Y-Position
+
+				  if (map.GetValue(x, y) == (int)TileType::Water || map.GetValue(x, y) == (int)TileType::DeepWater || map.GetValue(x, y) == (int)TileType::MediumWater || map.GetValue(x, y) == (int)TileType::ShallowWater) {
+					  Rectangle rect = { (float)x * 15, (float)y * 15, 15, 15 };
+					  rects.push_back(rect);
+					  numOfChests--;
+				  }
+			  }
+
+			  return rects;
+		  }
+	public:
+	std::vector<Rectangle> GetChestRectangles(Dynamic2DMapArray map, Vector2Int size)
+	{
+		std::vector<Rectangle> rects;
+		for (int x = 0; x < size.x; x++)
+		{
+			for (int y = 0; y < size.y; y++)
+			{
+				if (map.GetValue(x, y) == (int)TileType::Chest)
+				{
+					Rectangle rect = { (float)x * 15, (float)y * 15, 15, 15 };
+					rects.push_back(rect);
+				}
+			}
+		}
+		return rects;
 	}
 
 

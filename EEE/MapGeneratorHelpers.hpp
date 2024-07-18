@@ -10,19 +10,17 @@ class MapGeneratorHelpers
 		return x == 0 || x == size.x - 1 || y == 0 || y == size.y - 1;
 	}
 
-	bool IsInMapRange(int x, int y, const Vector2Int& size) {
+	bool IsInMapRanger(int x, int y, const Vector2Int& size) {
 		return x >= 0 && x < size.x && y >= 0 && y < size.y;
 	}
-	Rectangle GetRectangleFromTile(Vector2Int tile, int tileSize) {
-		return {(float)tile.x * tileSize, (float)tile.y * tileSize, (float)tileSize, (float)tileSize};
-	}
+	
 	std::vector<Vector2Int> GetTilesWithinRadius(Dynamic2DMapArray map, Vector2Int center, int radius) {
 		std::vector<Vector2Int> result;
 		for (int x = -radius; x <= radius; x++) {
 			for (int y = -radius; y <= radius; y++) {
 				if (x * x + y * y <= radius * radius) {  // Check if within circular radius
 					Vector2Int newPoint(center.x + x, center.y + y);
-					if (IsInMapRange(newPoint.x, newPoint.y, map.GetSize())) {
+					if (IsInMapRanger(newPoint.x, newPoint.y, map.GetSize())) {
 						result.push_back(newPoint);
 					}
 				}
@@ -41,7 +39,7 @@ class MapGeneratorHelpers
 			int neighbourY = gridY + dirY[i];
 
 			// If the neighbor is within map boundaries, check its status
-			if (IsInMapRange(neighbourX, neighbourY, size)) {
+			if (IsInMapRanger(neighbourX, neighbourY, size)) {
 				if (map.GetValue(neighbourX, neighbourY) == 1) {
 					count++;
 				}
@@ -64,7 +62,7 @@ class MapGeneratorHelpers
 			int neighbourY = gridY + dirY[i];
 
 			// If the neighbor is within map boundaries, check its status
-			if (IsInMapRange(neighbourX, neighbourY, size)) {
+			if (IsInMapRanger(neighbourX, neighbourY, size)) {
 				if (map.GetValue(neighbourX, neighbourY) == (int)targetTileType) {
 					count++;
 				}

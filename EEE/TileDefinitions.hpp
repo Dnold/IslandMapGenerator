@@ -13,6 +13,9 @@
 			y = _y;
 		}
 		Vector2Int() : x(0), y(0) {}
+		bool operator==(const Vector2Int& other) const {
+			return x == other.x && y == other.y;
+		}
 	};
 	class Dynamic2DMapArray
 	{
@@ -69,4 +72,4 @@
 	};
 
 
-	enum class TileType { Water = 0, Island = 1, Sand = 2, Border = 3, DeepWater = 4, MediumWater = 5, ShallowWater = 6 };
+	enum class TileType { Water = 0, Island = 1, Sand = 2, Border = 3, DeepWater = 4, MediumWater = 5, ShallowWater = 6, Chest=7,StartTile=8,EndTile=9 };

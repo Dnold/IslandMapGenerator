@@ -1,64 +1,70 @@
+#pragma once
 #include "TileDefinitions.hpp"
 #include "MapGeneratorHelpers.hpp"
 #include "raylib.h"
 class MapRenderer
 {
-   // #011D43
+	// #011D43
 	MapGeneratorHelpers mapGenerator;
 	public:
 	Vector2 CalculateOffset(Vector2Int screenSize, Vector2Int totalGridSize) {
 
 		return { (float)(screenSize.x - totalGridSize.x) / 2, (float)(screenSize.y - totalGridSize.y) / 2 };
 	}
-	public:Vector2Int GetTotalGridSize(int chunkSize, int gridSize, int tileSize) {
+	public:
+	Vector2Int GetTotalGridSize(int chunkSize, int gridSize, int tileSize) {
 		int total = chunkSize * gridSize * tileSize;
 		return Vector2Int(total, total);
 	}
-		  void DrawTile(Vector2 pos, int size, int value) {
-			 
-			  Color DEEP_WATER = { 4, 61, 143, 255 }; // #043D8F
-			  Color MEDIUM_WATER = { 15, 157, 202, 255 }; // #0F9DCA
-			  Color SHALLOW_WATER = { 151, 222, 223, 255 }; // #97DEDF
-			  Color SAND = { 247, 237, 198, 255 };    // #F7EDC6
-			  Color WATER = { 8, 26, 89 ,255 };// #0000FF
-			  switch (value) {
-			  case (int)TileType::Island:
-				  DrawRectangle(pos.x, pos.y, size, size, DARKGREEN);
-				  break;
-			  case (int)TileType::Border:
-				  DrawRectangle(pos.x, pos.y, size, size, RED);
-				  break;
-			  case (int)TileType::Water:
-				  DrawRectangle(pos.x, pos.y, size, size, WATER);
-				  break;
-			  case (int)TileType::Sand:
-				  DrawRectangle(pos.x, pos.y, size, size, SAND);
-				  break;
-			  case (int)TileType::DeepWater:
-				  DrawRectangle(pos.x, pos.y, size, size, DEEP_WATER);
-				  break;
-			  case (int)TileType::MediumWater:
-				  DrawRectangle(pos.x, pos.y, size, size, MEDIUM_WATER);
-				  break;
-			  case (int)TileType::ShallowWater:
-				  DrawRectangle(pos.x, pos.y, size, size, SHALLOW_WATER);
-				  break;
-			  default:
-				  DrawRectangle(pos.x, pos.y, size, size, BLACK);
-				  break;
-			  }
+	void DrawTile(Vector2 pos, int size, int value) {
+		Color DEEP_WATER = { 4, 61, 143, 255 }; // #043D8F
+		Color MEDIUM_WATER = { 15, 157, 202, 255 }; // #0F9DCA
+		Color SHALLOW_WATER = { 151, 222, 223, 255 }; // #97DEDF
+		Color SAND = { 247, 237, 198, 255 };    // #F7EDC6
+		Color WAT = { 8, 26, 89, 255 }; // #081A59
+		switch (value) {
+		case (int)TileType::Island:
+			DrawRectangle(pos.x, pos.y, size, size, DARKGREEN);
+			break;
+		case (int)TileType::Border:
+			DrawRectangle(pos.x, pos.y, size, size, RED);
+			break;
+		case (int)TileType::Water:
+			DrawRectangle(pos.x, pos.y, size, size, WAT);
+			break;
+		case (int)TileType::Sand:
+			DrawRectangle(pos.x, pos.y, size, size, SAND);
+			break;
+		case (int)TileType::DeepWater:
+			DrawRectangle(pos.x, pos.y, size, size, DEEP_WATER);
+			break;
+		case (int)TileType::MediumWater:
+			DrawRectangle(pos.x, pos.y, size, size, MEDIUM_WATER);
+			break;
+		case (int)TileType::ShallowWater:
+			DrawRectangle(pos.x, pos.y, size, size, SHALLOW_WATER);
+			break;
+		case(int)TileType::Chest:
+			DrawRectangle(pos.x, pos.y, size, size, WAT);
+			break;
+		case(int)TileType::StartTile:
+			DrawRectangle(pos.x, pos.y, size, size, WHITE);
+			break;
+		default:
+			DrawRectangle(pos.x, pos.y, size, size, BLACK);
+			break;
+		}
+	}
 
-			  
-		  }
-		  void DrawChunk(Chunk* chunk, Vector2Int offset, int chunkSize, int tileSize) {
-			  for (int x = 0; x < chunkSize; x++) {
-				  for (int y = 0; y < chunkSize; y++) {
-					  DrawTile({ offset.x + (float)x * tileSize,offset.y + (float)y * tileSize }, tileSize, chunk->map.GetValue(x, y));
+	void DrawChunk(Chunk* chunk, Vector2Int offset, int chunkSize, int tileSize) {
+		for (int x = 0; x < chunkSize; x++) {
+			for (int y = 0; y < chunkSize; y++) {
+				DrawTile({ offset.x + (float)x * tileSize,offset.y + (float)y * tileSize }, tileSize, chunk->map.GetValue(x, y));
 
-				  }
-			  }
-			  //DrawBorder(chunk->map, Vector2Int(chunkSize,chunkSize), offset.x, offset.y, tileSize);
-		  }
+			}
+		}
+		//DrawBorder(chunk->map, Vector2Int(chunkSize,chunkSize), offset.x, offset.y, tileSize);
+	}
 
 	public:void DrawChunkGrid(Chunk*** chunks, float offsetX, float offsetY, int chunkSize, int gridSize, int tileSize) {
 		for (int chunkX = 0; chunkX < gridSize; chunkX++) {

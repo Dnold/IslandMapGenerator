@@ -106,7 +106,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>D:\Bibliotheken\raylib-4.6-dev_win64_msvc16\raylib-4.6-dev_win64_msvc16\include</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -132,15 +132,34 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BaseItem.cpp" />
+    <ClCompile Include="Chestplate.cpp" />
+    <ClCompile Include="EquipmentSlot.cpp" />
+    <ClCompile Include="Pathfinder.cpp" />
+    <ClCompile Include="Ring.cpp" />
+    <ClCompile Include="Inventory.cpp" />
+    <ClCompile Include="ItemContainer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Sword.cpp" />
+    <ClCompile Include="TreasureChest.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BaseItem.h" />
+    <ClInclude Include="C:\Users\noldd\Downloads\astar.hpp" />
+    <ClInclude Include="Chestplate.h" />
+    <ClInclude Include="EquipmentSlot.h" />
+    <ClInclude Include="Pathfinder.h" />
+    <ClInclude Include="Ring.h" />
+    <ClInclude Include="Inventory.h" />
+    <ClInclude Include="ItemContainer.h" />
     <ClInclude Include="MapGenerator.hpp" />
     <ClInclude Include="MapGeneratorHelpers.hpp" />
     <ClInclude Include="MapRenderer.hpp" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="Sword.h" />
     <ClInclude Include="TileDefinitions.hpp" />
+    <ClInclude Include="TreasureChest.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
